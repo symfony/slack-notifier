@@ -49,7 +49,7 @@ final class SlackWebhookTransport extends AbstractTransport
 
         parent::__construct($client, $dispatcher);
     }
-    
+
     public function __toString(): string
     {
         return sprintf(
@@ -85,32 +85,25 @@ final class SlackWebhookTransport extends AbstractTransport
         }
 
         $options = $opts ? $opts->toArray() : [];
-        $options['token'] = $this->accessToken;
         if (!isset($options['channel'])) {
             $options['channel'] = $message->getRecipientId() ?: $this->channel;
         }
         $options['username'] = $options['username'] ?? $this->username;
         $options['text'] = $message->getSubject();
+
         $response = $this->client->request(
-            'POST', 
+            'POST',
             sprintf(
                 '%s://%s/%s',
                 'https',
                 $this->getEndpoint(),
                 $this->webhookPath
-            ), 
-            [
-                'body' => array_filter($options),
-            ]
+            ),
+            ['json' => array_filter($options)]
         );
 
         if (200 !== $response->getStatusCode()) {
             throw new TransportException(sprintf('Unable to post the Slack message: %s.', $response->getContent(false)), $response);
-        }
-
-        $result = $response->toArray(false);
-        if (!$result['ok']) {
-            throw new TransportException(sprintf('Unable to post the Slack message: %s.', $result['error']), $response);
         }
     }
 }

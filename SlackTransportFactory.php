@@ -29,28 +29,27 @@ final class SlackTransportFactory extends AbstractTransportFactory
     public function create(Dsn $dsn): TransportInterface
     {
         $scheme = $dsn->getScheme();
-        $accessToken = $this->getUser($dsn);
         $channel = $dsn->getOption('channel');
         $host = 'default' === $dsn->getHost() ? null : $dsn->getHost();
         $port = $dsn->getPort();
-        
 
         if ('slack' === $scheme) {
+            $accessToken = $this->getUser($dsn);
             return (new SlackTransport($accessToken, $channel, $this->client, $this->dispatcher))->setHost($host)->setPort($port);
         }
-        
+
         if ('slack+webhook' === $scheme) {
             $webhookPath = ltrim($dsn->getPath(), '/');
             $username = $dsn->getOption('username');
 
             return (new SlackWebhookTransport($webhookPath, $channel, $username, $this->client, $this->dispatcher))->setHost($host)->setPort($port);
         }
-        
+
         throw new UnsupportedSchemeException($dsn, 'slack', $this->getSupportedSchemes());
     }
 
     protected function getSupportedSchemes(): array
     {
-        return ['slack'];
+        return ['slack', 'slack+webhook'];
     }
 }
