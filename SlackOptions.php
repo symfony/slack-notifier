@@ -13,7 +13,9 @@ namespace Symfony\Component\Notifier\Bridge\Slack;
 
 use Symfony\Component\Notifier\Bridge\Slack\Block\SlackBlockInterface;
 use Symfony\Component\Notifier\Bridge\Slack\Block\SlackDividerBlock;
+use Symfony\Component\Notifier\Bridge\Slack\Block\SlackImageBlock;
 use Symfony\Component\Notifier\Bridge\Slack\Block\SlackSectionBlock;
+use Symfony\Component\Notifier\Bridge\Slack\Notification\ImageNotification;
 use Symfony\Component\Notifier\Message\MessageOptionsInterface;
 use Symfony\Component\Notifier\Notification\Notification;
 
@@ -35,7 +37,11 @@ final class SlackOptions implements MessageOptionsInterface
     {
         $options = new self();
         $options->iconEmoji($notification->getEmoji());
-        $options->block((new SlackSectionBlock())->text($notification->getSubject()));
+        $block = (new SlackSectionBlock())->text($notification->getSubject());
+        if ($notification instanceof ImageNotification) {
+            $block = new SlackImageBlock($notification->getImageUrl(), $notification->getSubject());
+        }
+        $options->block($block);
         if ($notification->getContent()) {
             $options->block((new SlackSectionBlock())->text($notification->getContent()));
         }
