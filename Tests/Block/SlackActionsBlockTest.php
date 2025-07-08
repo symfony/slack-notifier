@@ -34,7 +34,7 @@ final class SlackActionsBlockTest extends TestCase
                         'text' => 'first button text',
                     ],
                     'url' => 'https://example.org',
-                    'value' => 'test-value'
+                    'value' => 'test-value',
                 ],
                 [
                     'type' => 'button',
@@ -52,7 +52,7 @@ final class SlackActionsBlockTest extends TestCase
                         'text' => 'third button text',
                     ],
                     'value' => 'test-value-3',
-                ]
+                ],
             ],
         ], $actions->toArray());
     }
