@@ -285,7 +285,7 @@ final class SlackTransportTest extends TransportTestCase
                 'errors' => ['no more than 50 items allowed [json-pointer:/blocks]'],
             ]));
 
-        $client = new MockHttpClient(fn (): ResponseInterface => $response);
+        $client = new MockHttpClient(static fn (): ResponseInterface => $response);
 
         $transport = self::createTransport($client, 'testChannel');
 
